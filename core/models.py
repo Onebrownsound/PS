@@ -26,3 +26,4 @@ class Capsule(models.Model):
     delivery = models.CharField(max_length=10, choices=FUTURE_DELIVERY_CHOICES, default='SD')
     time_delivery = models.DateTimeField(blank=True)
     owner = models.ForeignKey('auth.User', related_name='capsules')
+

@@ -1,30 +1,40 @@
-from django.shortcuts import render, redirect,HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import RegisterUserForm,LoginForm
+from .forms import RegisterUserForm, LoginForm
 from django.contrib.auth.models import User
-
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 
 # Create your views here.
 
 
-def login(request):
-    if request.method=='POST':
-        form = LoginForm(request.POST)
+def login_view(request):
+
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
         if form.is_valid():
-            user = authenticate(user=form['username'], password=['password'])
-            if user is not None and user.is_active():
-                    login(request, user)
-                    return HttpResponseRedirect('home')
-            else:#login failed
-                return HttpResponseRedirect('/login')
-    else:#GET
+            user = authenticate(username=form['username'].value(), password=form['password'].value())
+            if user is not None :
+                login(request, user)
+                return redirect('home')
+            else:
+                return PermissionDenied
+    else:  # GET
         form = LoginForm()
-        return render(request,'login.html',{'form':form})
+        return render(request, 'login.html', {'form': form})
+
 
 def home(request):
-    return render(request, 'index.html', {})
+    user = None
+    if request.user.is_authenticated():
+        user = request.user
+    return render(request, 'index.html', {'user': user})
 
+@login_required()
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 def register(request):
     # If it's a HTTP POST, we're interested in processing form data.

@@ -4,7 +4,7 @@
             {% if form.errors %}
                 {{ form.errors }} <!-- display the form errors if they exist -->
             {% endif %}
-            <form action="" method="post" enctype="multipart/form-data">
+            <form id='form' action="" method="post" >
                 {% csrf_token %}
                 {{ form.as_p }}
                 <input type="submit" value="Submit"/>
