@@ -15,8 +15,9 @@
     <!-- Bootstrap Core CSS -->
     <link href="{% static "core/css/bootstrap.min.css" %}" rel="stylesheet">
 
-    <!-- Custom CSS -->
+     <!-- Custom CSS -->
     <link href="{% static "core/css/grayscale.css" %}" rel="stylesheet">
+
 
     <!-- Custom Fonts -->
     <link href="{% static "core/css/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
@@ -33,6 +34,7 @@
 </head>
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 
+<div>
 <!-- Navigation -->
 <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
     <div class="container">
@@ -40,7 +42,7 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
                 <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand page-scroll" href="#page-top">
+            <a class="navbar-brand page-scroll" href="/">
                 <i class="fa fa-play-circle"></i> <span class="light">Start</span> P.S.
             </a>
         </div>
@@ -53,22 +55,24 @@
                     <a href="#page-top"></a>
                 </li>
                 <li>
-                    <a class="page-scroll" href="#about">About</a>
+                    <a class="page-scroll" href="/#about">About</a>
                 </li>
+
                 <li>
-                    <a class="page-scroll" href="#contact">Contact</a>
+                    <a class="page-scroll" href="/#contact">Contact</a>
                 </li>
                 {% if not user.is_authenticated %}
                     <li>
                         <a href="/login">Login</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#register">Register</a>
+                        <a href="/register">Register</a>
                     </li>
                 {% else %}
                     <li>
                         <a href="/logout">Logout</a>
                     </li>
+
 
                 {% endif %}
             </ul>
@@ -77,7 +81,7 @@
     </div>
     <!-- /.container -->
 </nav>
-
+</div>
 {% block content %}{% endblock %}
 
 
