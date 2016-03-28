@@ -10,16 +10,17 @@ from django.core.exceptions import PermissionDenied
 
 
 def login_view(request):
-
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
         if form.is_valid():
             user = authenticate(username=form['username'].value(), password=form['password'].value())
-            if user is not None :
+            if user is not None:
                 login(request, user)
                 return redirect('home')
             else:
-                return PermissionDenied
+                return render(request, 'login.html', {'form': form, 'invalid':True})
+
+
     else:  # GET
         form = LoginForm()
         return render(request, 'login.html', {'form': form})
@@ -31,13 +32,14 @@ def home(request):
         user = request.user
     return render(request, 'index.html', {'user': user})
 
+
 @login_required()
 def logout_view(request):
     logout(request)
     return redirect('home')
 
+
 def register(request):
-    # If it's a HTTP POST, we're interested in processing form data.
     if request.method == 'POST':
         user_form = RegisterUserForm(data=request.POST)
         if user_form.is_valid():

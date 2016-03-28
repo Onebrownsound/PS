@@ -1,16 +1,30 @@
+{% extends 'second_base.html' %}
 {% block content %}
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2">
-            {% if form.errors %}
-                {{ form.errors }} <!-- display the form errors if they exist -->
-            {% endif %}
-            <form id='form' action="" method="post" >
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Submit"/>
-            </form>
-        </div>
-    </div>
-    </div>
+    <header class="intro">
+        <div class="intro-body">
+            <h1>Login</h1>
+            <div class="row">
+                <div class="col-lg-12 text-left ">
+                    <div class="col-lg-12 ">
+                        {% if invalid %}
+                            <p>INVALID USER CREDENTIALS</p>
+                        {% endif %}
+                        {% if form.errors %}
+                            {{ form.errors }} <!-- display the form errors if they exist -->
+                        {% endif %}
 
+                        <form id='form' class="form-horizontal indigo clear-form" action="" method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <input type="submit" class="btn btn-default" value="Submit"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 {% endblock %}
+
+
+
+
