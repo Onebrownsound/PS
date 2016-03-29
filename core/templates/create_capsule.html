@@ -1,4 +1,4 @@
-{% extends 'second_base.html' %}
+{% extends "second_base.html" %}
 {% block content %}
     <header class="intro">
         <div class="intro-body">
@@ -13,7 +13,7 @@
                             {{ form.errors }} <!-- display the form errors if they exist -->
                         {% endif %}
 
-                        <form id='form' class="form-horizontal indigo clear-form" action="" method="post">
+                        <form id='form' class="form-horizontal indigo clear-form" action="" method="POST">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <input type="submit" class="btn btn-default" value="Submit"/>
