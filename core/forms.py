@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core import validators
+from .models import Capsule
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -14,8 +15,18 @@ class RegisterUserForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username:', max_length=100)
     password = forms.CharField(label='Password:', max_length=100)
+
     class Meta:
         model = User
-        fields = ('username','password')
+        fields = ('username', 'password')
 
 
+class CapsuleForm(forms.ModelForm):
+    time_activation = forms.DateTimeField(widget=forms.SelectDateWidget())
+    time_delivery = forms.DateTimeField(widget=forms.SelectDateWidget())
+
+    class Meta:
+        model = Capsule
+        fields = (
+            'title', 'message', 'file', 'activation', 'time_activation', 'delivery', 'time_delivery',
+        )

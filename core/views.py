@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import RegisterUserForm, LoginForm
+from .forms import RegisterUserForm, LoginForm, CapsuleForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -18,7 +18,7 @@ def login_view(request):
                 login(request, user)
                 return redirect('home')
             else:
-                return render(request, 'login.html', {'form': form, 'invalid':True})
+                return render(request, 'login.html', {'form': form, 'invalid': True})
 
 
     else:  # GET
@@ -37,6 +37,15 @@ def home(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+@login_required(login_url='login')
+def create_content_view(request):
+    if request.method == 'POST':
+        pass
+
+    form = CapsuleForm()
+    return render(request, 'create_capsule.html', {'form': form})
 
 
 def register(request):

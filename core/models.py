@@ -25,5 +25,4 @@ class Capsule(models.Model):
     time_activation = models.DateTimeField(blank=True)
     delivery = models.CharField(max_length=10, choices=FUTURE_DELIVERY_CHOICES, default='SD')
     time_delivery = models.DateTimeField(blank=True)
-    owner = models.ForeignKey('auth.User', related_name='capsules')
-
+    owner = models.ForeignKey(User, related_name='capsules', unique=True)
