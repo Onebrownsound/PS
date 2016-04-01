@@ -40,8 +40,12 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
                 <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand page-scroll" href="#page-top">
-                <i class="fa fa-play-circle"></i> <span class="light">Start</span> P.S.
+            {% if not user.is_authenticated %}
+                <a class="navbar-brand page-scroll" href="/login">
+            {% else %}
+                <a class="navbar-brand page-scroll" href="/capsule">
+            {% endif %}
+            <i class="fa fa-play-circle"></i> <span class="light">Start</span> P.S.
             </a>
         </div>
 

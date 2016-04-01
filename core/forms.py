@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from .models import Capsule
 
 
-
 class RegisterUserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -22,10 +21,14 @@ class LoginForm(forms.Form):
 
 
 class CapsuleForm(forms.ModelForm):
-    time_activation = forms.DateField(widget=forms.SelectDateWidget(),label='Select Activation Time')
+
     time_delivery = forms.DateField(widget=forms.SelectDateWidget())
+    author_twitter = forms.CharField(max_length=40, label='Your twitter ID:', help_text='Without @ Symbol',)
+    target_twitter = forms.CharField(max_length=40, label='Target twitter ID:', help_text='Without @ Symbol')
+
     class Meta:
         model = Capsule
         fields = (
-            'title',  'file', 'activation', 'time_activation', 'delivery', 'time_delivery',
+            'title', 'file', 'message', 'activation_type', 'delivery_condition', 'time_delivery', 'author_twitter',
+            'target_twitter'
         )

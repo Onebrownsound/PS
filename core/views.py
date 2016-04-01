@@ -29,18 +29,22 @@ def home(request):
     return render(request, 'index.html', {'user': user})
 
 
-@login_required()
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('home')
 
 
 @login_required(login_url='login')
-def create_content_view(request):
-    if request.method == 'POST':
-        pass
-
+def create_capsule_view(request): #View for creating time capsules
     form = CapsuleForm()
+    if request.method == 'POST':
+        form = CapsuleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form = form.save(commit=False) #first save with a false commit to manually insert user id after
+            form.owner = request.user
+            form.save()
+            return redirect('home') #redirect to home TODO redirect to a listview of a user's time capsules
     return render(request, 'create_capsule.html', {'form': form})
 
 
