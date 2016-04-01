@@ -58,7 +58,7 @@ def register(request):
             user = User.objects.create_user(user_form['username'].value(), user_form['email'].value(),
                                             user_form['password'].value())
             user.save()
-            return redirect('home')
+            return redirect('login_view')
     else:
         user_form = RegisterUserForm()
 
@@ -68,7 +68,7 @@ def register(request):
 @login_required(login_url='login')
 def display_capsules_view(request):
     if request.method == 'GET':
-        capsules = Capsule.objects.filter(owner=request.user)  # get all capsules belonging to a particular user
+        capsules = Capsule.objects.filter(owner=request.user).order_by('-created')  # get all capsules belonging to a particular user,recent first
         capsules = translate_delivery_condition(
             capsules)  # convert DB delivery notation to verbose string,aka 'SD' -> Specific Date In The Future
 
