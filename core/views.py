@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterUserForm, LoginForm, CapsuleForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from .models import Capsule, FUTURE_DELIVERY_DICT
+
+'''View Functions Live Below'''
 
 
 def login_view(request):
@@ -36,15 +39,15 @@ def logout_view(request):
 
 
 @login_required(login_url='login')
-def create_capsule_view(request): #View for creating time capsules
+def create_capsule_view(request):  # View for creating time capsules
     form = CapsuleForm()
     if request.method == 'POST':
         form = CapsuleForm(request.POST, request.FILES)
         if form.is_valid():
-            form = form.save(commit=False) #first save with a false commit to manually insert user id after
-            form.owner = request.user
+            form = form.save(commit=False)  # first save with a false commit to manually insert user id after
+            form.owner = request.user  # sort of hackish but it works, hopefully find a better way later
             form.save()
-            return redirect('home') #redirect to home TODO redirect to a listview of a user's time capsules
+            return redirect('home')  # TODO redirect to view which shows all of a users capsules
     return render(request, 'create_capsule.html', {'form': form})
 
 
@@ -60,3 +63,22 @@ def register(request):
         user_form = RegisterUserForm()
 
     return render(request, 'register.html', {'user_form': user_form})
+
+
+@login_required(login_url='login')
+def display_capsules_view(request):
+    if request.method == 'GET':
+        capsules = Capsule.objects.filter(owner=request.user)  # get all capsules belonging to a particular user
+        capsules = translate_delivery_condition(
+            capsules)  # convert DB delivery notation to verbose string,aka 'SD' -> Specific Date In The Future
+
+        return render(request, 'display_capsules.html', {'capsules': capsules})
+
+
+'''Helper Functions Live Below'''
+
+
+def translate_delivery_condition(ax):
+    for data in ax:
+        data.delivery_condition = FUTURE_DELIVERY_DICT[data.delivery_condition]
+    return ax

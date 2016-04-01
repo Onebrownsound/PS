@@ -15,6 +15,8 @@ FUTURE_DELIVERY_CHOICES = (
 
 )
 
+FUTURE_DELIVERY_DICT = {key: value for (key, value) in FUTURE_DELIVERY_CHOICES}
+
 
 class Capsule(models.Model):
     created = models.DateTimeField(auto_now_add=True)

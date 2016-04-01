@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+    <header class="intro">
+        <div class="intro-body">
+            <h1>Here are your capsules.</h1>
+
+            <div class="row">
+                <div class="col-lg-12 text-left ">
+                    <div class="table-responsive ">
+                        <table class="table indigo" style="font-size:130%;">
+                            <thead>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Target's Twitter</th>
+                            <th>Delivery Condition</th>
+
+                            </thead>
+
+                            {% for capsule in capsules %}
+                                <tr>
+                                    <td>{{ capsule.title }}</td>
+                                    <td>{{ capsule.created }}</td>
+                                    <td>{{ capsule.target_twitter }}</td>
+                                    <td>{{ capsule.delivery_condition}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+{% endblock %}
