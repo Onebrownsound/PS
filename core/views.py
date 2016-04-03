@@ -79,6 +79,18 @@ def display_capsules_view(request):
 
 
 def translate_delivery_condition(ax):
+    """
+    Takes in a list of Capsule Model objects. Translates short delivery condition abbreviation to the verbose definition
+    AKA 'M' -> 'Marriage". Import to note this does not save to the db. Make sure this never happens
+
+    Args:
+        ax:list of Capsule Model objects
+    Output:
+        ax: list of Capsule Model objects with delivery_condition expressed verbosely.
+
+
+
+    """
     for data in ax:
         data.delivery_condition = FUTURE_DELIVERY_DICT[data.delivery_condition]
     return ax

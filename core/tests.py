@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .tasks import score_threshold
 from sklearn.externals import joblib
-from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier
+from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TRANSLATOR
 from post_classifier.datacombiner import DataCombiner
 
 
@@ -22,8 +22,8 @@ class UtilsTestCase(TestCase):
         passing_data = ['I am so sorry for your loss', 'cann somebody pass me the milk',
                         'rip to bobby my deepest condolences for his family', '#rip to the best friend I ever had',
                         'the world lost someone amazing today RIP pdiddy']
-        self.assertEqual(score_threshold(failing_data, classifier, 1), False)
-        self.assertEqual(score_threshold(passing_data, classifier, 1), True)
+        self.assertEqual(score_threshold(failing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), False)
+        self.assertEqual(score_threshold(passing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), True)
 
 
 class ClassifierTestCase(TestCase):

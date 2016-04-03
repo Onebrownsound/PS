@@ -5,7 +5,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.externals import joblib
 from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import train_test_split
-from datacombiner import DataCombiner, Object
+from .datacombiner import DataCombiner, Object
 import random
 import numpy as np
 
@@ -40,8 +40,8 @@ def classify_and_print_test_documents(classifier, test_documents, data_target_na
 
 def evaluate_classifier(classifier, _data):
     predictions = classifier.predict(_data.data)
-    result=np.mean(predictions == _data.target)
-    print (result)
+    result = np.mean(predictions == _data.target)
+    print("Operating at a {} % successfuly diagnosis rate.".format(result * 100))
     return result
 
 
@@ -75,6 +75,12 @@ def grid_search(sample, classifier):  # Find optimal parameter values given the 
 
 """Hardcoded data objects below"""
 
+"""
+Make sure the mapping below is symmetric to how the layout to how a given iteration of the classifier is fed.
+AKA if we train a new classifier in a different order aka death before marriage make sure this reflects that.
+"""
+CLASSIFICATION_TRANSLATOR = {'marriage': 0, 'death': 1, 'baby': 2, 'garbage': 3}
+
 if __name__ == '__main__':
     docs_new = ['i will miss you bob RIP ', 'congrats on your marriage becky',
                 'you were a very kind friend ill miss you dearly', 'ryan you were an animal grats on the wedding day',
@@ -90,15 +96,12 @@ if __name__ == '__main__':
                 '#theysaidido i do todays the big day #ido', 'marriage sucks ill never do it again to hell with bobby',
                 '#rip miss you kev']
     parameters = {'vect__ngram_range': [(1, 1), (1, 2)],
-              'tfidf__use_idf': (True, False),
-              'clf__alpha': (1e-2, 1e-3),
-              }
+                  'tfidf__use_idf': (True, False),
+                  'clf__alpha': (1e-2, 1e-3),
+                  }
     tweets = DataCombiner(
         filenames=['marriage_tweets.txt', 'death_tweets.txt', 'baby_tweets.txt', 'garbage_tweets.txt'],
-        classifications=['Marriage', 'Death', 'Baby', 'Garbage'])
-
-
-
+        classifications=['marriage', 'death', 'baby', 'garbage'])
 
     training_tweets, testing_tweets = create_training_testing_data(tweets, 0.80)  # break the tweets up
     # text_clf = create_classifier(training_tweets.data, training_tweets.target)
