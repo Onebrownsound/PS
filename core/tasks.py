@@ -45,7 +45,6 @@ def find_dead_users():
 def score_threshold(data, clf):
     score = 0
     predicted_result = clf.predict(data)
-    print(predicted_result)
     for value in predicted_result:
         if value == 1:
             print('found a death post')
