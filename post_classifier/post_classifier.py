@@ -5,7 +5,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.externals import joblib
 from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import train_test_split
-from datacombiner import DataCombiner, Object
+from .datacombiner import DataCombiner, Object
 import random
 import numpy as np
 
@@ -93,9 +93,9 @@ parameters = {'vect__ngram_range': [(1, 1), (1, 2)],
               'tfidf__use_idf': (True, False),
               'clf__alpha': (1e-2, 1e-3),
               }
-
+text_clf = load_classifier('classifier')
 if __name__ == '__main__':
-    training_tweets, testing_tweets = create_training_testing_data(tweets, 0.80)  # break the tweets up
+    #training_tweets, testing_tweets = create_training_testing_data(tweets, 0.80)  # break the tweets up
     #text_clf = create_classifier(training_tweets.data, training_tweets.target)
     text_clf = load_classifier('classifier')
     # sample_tweets = randomly_sample_data(tweets, 400000)

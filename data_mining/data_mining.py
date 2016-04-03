@@ -48,7 +48,7 @@ def collectTweets(tweet_file_name, query_string):
             time.sleep(60 * 1)
 
 
-collectTweets('death_tweets', "condolences sorry for your loss")
+#collectTweets('death_tweets', "condolences sorry for your loss")
 
 
 

@@ -1,0 +1,17 @@
+steps for getting numpy/scipy to work with python3 in linux.
+
+NUMPY:
+sudo apt-get install python3-dev //installs for global python3 usage
+setup virtualenv within project + make it the source
+pip install numpy
+
+
+SCIPY:
+sudo apt-get install python3-scipy
+sudo apt-get build-dep python3-scipy
+pip install numpy
+pip install scipy
+
+
+Redis For Celery:
+sudo apt-get install redis-server
