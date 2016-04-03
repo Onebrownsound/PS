@@ -32,8 +32,9 @@ def find_dead_users():
         return
     for candidate in candidate_capsules:
         try:
-            username = '@' + candidate.author_twitter
+            username = '@' + candidate.author_twitter  # searching for @author_twitter will show incoming tweets to author
             recently_received_tweets = api.search(q=username, count=20)
+            recently_received_tweets = [tweet.text for tweet in recently_received_tweets]  # <3 generators extract text
             if score_threshold(recently_received_tweets, classifier):
                 candidate.is_active = True
                 candidate.save()
@@ -43,12 +44,12 @@ def find_dead_users():
 
 def score_threshold(data, clf):
     score = 0
-    for tweet in data:
-        predicted_result = clf.predict(tweet.text)
-        if predicted_result == 1:
+    predicted_result = clf.predict(data)
+    print(predicted_result)
+    for value in predicted_result:
+        if value == 1:
             print('found a death post')
             score += 1
-    if score > 2:
+    if score >= 1:
         return True
     return False
-

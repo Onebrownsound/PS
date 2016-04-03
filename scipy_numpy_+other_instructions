@@ -15,3 +15,9 @@ pip install scipy
 
 Redis For Celery:
 sudo apt-get install redis-server
+
+
+
+Startin Celery Workers+Beat:
+celery -A PS_Prototype worker -l info
+celery -A PS_Prototype beat -l info

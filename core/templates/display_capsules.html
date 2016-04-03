@@ -13,6 +13,7 @@
                             <th>Created</th>
                             <th>Target's Twitter</th>
                             <th>Delivery Condition</th>
+                            <th>Active</th>
 
                             </thead>
 
@@ -22,6 +23,7 @@
                                     <td>{{ capsule.created }}</td>
                                     <td>{{ capsule.target_twitter }}</td>
                                     <td>{{ capsule.delivery_condition}}</td>
+                                    <td>{{ capsule.is_active }}</td>
                                 </tr>
                             {% endfor %}
                         </table>
