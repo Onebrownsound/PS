@@ -4,6 +4,7 @@ from .forms import RegisterUserForm, LoginForm, CapsuleForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Capsule, FUTURE_DELIVERY_DICT
+from django_cron import CronJobBase, Schedule
 
 '''View Functions Live Below'''
 
@@ -68,7 +69,8 @@ def register(request):
 @login_required(login_url='login')
 def display_capsules_view(request):
     if request.method == 'GET':
-        capsules = Capsule.objects.filter(owner=request.user).order_by('-created')  # get all capsules belonging to a particular user,recent first
+        capsules = Capsule.objects.filter(owner=request.user).order_by(
+            '-created')  # get all capsules belonging to a particular user,recent first
         capsules = translate_delivery_condition(
             capsules)  # convert DB delivery notation to verbose string,aka 'SD' -> Specific Date In The Future
 
