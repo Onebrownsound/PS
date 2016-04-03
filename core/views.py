@@ -4,7 +4,7 @@ from .forms import RegisterUserForm, LoginForm, CapsuleForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Capsule, FUTURE_DELIVERY_DICT
-from django_cron import CronJobBase, Schedule
+
 
 '''View Functions Live Below'''
 
