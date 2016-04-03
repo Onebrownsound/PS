@@ -14,7 +14,7 @@
                             {{ form.errors }} <!-- display the form errors if they exist -->
                         {% endif %}
 
-                        <form id='form' class="form-horizontal indigo clear-form" action="" method="POST">
+                        <form id='form' class="form-horizontal indigo clear-form" action="" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <input type="submit" class="btn btn-default" value="Submit"/>

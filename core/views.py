@@ -87,9 +87,6 @@ def translate_delivery_condition(ax):
         ax:list of Capsule Model objects
     Output:
         ax: list of Capsule Model objects with delivery_condition expressed verbosely.
-
-
-
     """
     for data in ax:
         data.delivery_condition = FUTURE_DELIVERY_DICT[data.delivery_condition]

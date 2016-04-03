@@ -46,7 +46,10 @@ def find_dead_users():
         return
     for candidate in candidate_capsules:
         try:
-            username = '@' + candidate.author_twitter  # searching for @author_twitter will show incoming tweets to author
+            if candidate.author_twitter[0] != '@':
+                username = '@' + candidate.author_twitter  # searching for @author_twitter will show incoming tweets to author
+            else:
+                username = candidate.author_twitter  # Incase a user was naughty and included @ despite the directions
             recently_received_tweets = api.search(q=username, count=20)
             recently_received_tweets = [tweet.text for tweet in recently_received_tweets]  # <3 generators extract text
             if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TRANSLATOR['death']):
