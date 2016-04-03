@@ -19,8 +19,6 @@ def login_view(request):
                 return redirect('home')
             else:
                 return render(request, 'login.html', {'form': form, 'invalid': True})
-
-
     else:  # GET
         form = LoginForm()
         return render(request, 'login.html', {'form': form})

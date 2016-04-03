@@ -1,10 +1,22 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Capsule
+from django.core import validators
+from django.core.exceptions import ValidationError
 
 
 class RegisterUserForm(forms.ModelForm):
+    username = forms.CharField(required=True)
+    email = forms.EmailField(required=True, validators=[validators.validate_email])
     password = forms.CharField(widget=forms.PasswordInput())
+    password_repeat = forms.CharField(widget=forms.PasswordInput())
+
+    def clean_password_repeat(self):
+        password = self.cleaned_data['password']
+        password_repeat = self.cleaned_data['password_repeat']
+        if password != password_repeat:
+            raise ValidationError('Passwords do not match')
+        return password_repeat
 
     class Meta:
         model = User
@@ -12,8 +24,8 @@ class RegisterUserForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Username:', max_length=100)
-    password = forms.CharField(label='Password:', max_length=100)
+    username = forms.CharField(label='Username:', max_length=100, required=True)
+    password = forms.CharField(label='Password:', max_length=100, required=True)
 
     class Meta:
         model = User
@@ -21,11 +33,10 @@ class LoginForm(forms.Form):
 
 
 class CapsuleForm(forms.ModelForm):
-
     time_delivery = forms.DateField(widget=forms.SelectDateWidget())
-    author_twitter = forms.CharField(max_length=40, label='Your twitter ID:', help_text='Without @ Symbol',)
+    author_twitter = forms.CharField(max_length=40, label='Your twitter ID:', help_text='Without @ Symbol', )
     target_twitter = forms.CharField(max_length=40, label='Target twitter ID:', help_text='Without @ Symbol')
-    message = forms.CharField (max_length=1000)
+    message = forms.CharField(max_length=1000)
 
     class Meta:
         model = Capsule
