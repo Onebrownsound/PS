@@ -1,8 +1,10 @@
 from django.test import TestCase
-from .tasks import score_threshold
+from .tasks import score_threshold, find_dead_candidates, generic_find_delivery_candidates
 from sklearn.externals import joblib
 from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TRANSLATOR
 from post_classifier.datacombiner import DataCombiner
+from .models import Capsule
+from django.contrib.auth.models import User
 
 
 # Create your tests here.
@@ -13,7 +15,22 @@ class UtilsTestCase(TestCase):
     intended behavior is that > 45% that gets classifier as our desired result AKA we are looking for death tweets, to
     classify a user as dead. If >45% or what ever threshold we input gets classified as what we are searching for we
     should return True else False.
+
+    We also set up dummy DB data, to see if the scheduled background celery workers found in tasks.py are functioning.
     """
+
+    def setUp(self):
+        # Here we make a dummy User and dummy capsules for subsequent tests. Remember these only exist in test dummy db.
+        dummy_data = {'title': 'dummy title', 'message': 'test message'}
+        User.objects.create_user(username='dom', email='dom@g.com', password='dom')
+        Capsule.objects.create(activation_type='D', is_active=False, is_deliverable=False, author_twitter='_PSDev',
+                               owner=User.objects.get(username='dom'), **dummy_data)
+        Capsule.objects.create(activation_type='D', is_active=True, is_deliverable=False, target_twitter='_PSDev',
+                               delivery_condition='W',
+                               owner=User.objects.get(username='dom'), **dummy_data)
+        # The previous one is sort of hackish, because I do not have a twitter setup that could trigger ML to classify
+        # it's feed as marriage.So we will just have it filter for marriage delivery type but say a successfully
+        # classification is death since _PSDev currently classifies as death.
 
     def test_scoring_functionality(self):
         classifier = joblib.load('./post_classifier/classifier.pkl')
@@ -24,6 +41,12 @@ class UtilsTestCase(TestCase):
                         'the world lost someone amazing today RIP pdiddy']
         self.assertEqual(score_threshold(failing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), False)
         self.assertEqual(score_threshold(passing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), True)
+
+    def test_tasks(self):
+        find_dead_candidates()
+        self.assertEqual(Capsule.objects.get(pk=1).is_active, True)
+        generic_find_delivery_candidates(delivery_type='W', desired_classification='death')
+        self.assertEqual(Capsule.objects.get(pk=2).is_deliverable, True)
 
 
 class ClassifierTestCase(TestCase):

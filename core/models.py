@@ -12,7 +12,8 @@ FUTURE_DELIVERY_CHOICES = (
     ('SD', 'Specific Date In Future'),
     ('W', 'Wedding'),
     ('CB', 'Child Birth'),
-    ('M', 'Marriage')
+    ('M', 'Marriage'),
+    ('D', 'Death')
 
 )
 
@@ -39,7 +40,7 @@ class Capsule(models.Model):
     file = models.FileField(blank=True, upload_to=partial(make_rng_filename, 'files'), null=True)
     activation_type = models.CharField(max_length=10, choices=FUTURE_ACTIVATION_CHOICES, default='D')
     delivery_condition = models.CharField(max_length=10, choices=FUTURE_DELIVERY_CHOICES, default='SD')
-    time_delivery = models.DateField(blank=True)
+    time_delivery = models.DateField(blank=True, null=True)
     owner = models.ForeignKey(User)
     is_active = models.BooleanField(default=False)
     is_deliverable = models.BooleanField(default=False)
@@ -47,4 +48,4 @@ class Capsule(models.Model):
     target_twitter = models.CharField(max_length=40, default='')
 
     def __str__(self):
-        return self.id + " " + self.title + " By: " + self.owner.username
+        return str(self.id) + " " + self.title + " By: " + self.owner.username

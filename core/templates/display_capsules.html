@@ -11,9 +11,11 @@
                             <thead class="indigo">
                             <th>Title</th>
                             <th>Created</th>
+                            <th>Author's Twitter</th>
                             <th>Target's Twitter</th>
                             <th>Delivery Condition</th>
                             <th>Active</th>
+                            <th>Deliverable</th>
 
                             </thead>
 
@@ -21,9 +23,11 @@
                                 <tr>
                                     <td>{{ capsule.title }}</td>
                                     <td>{{ capsule.created }}</td>
+                                    <td>{{ capsule.author_twitter }}</td>
                                     <td>{{ capsule.target_twitter }}</td>
                                     <td>{{ capsule.delivery_condition}}</td>
                                     <td>{{ capsule.is_active }}</td>
+                                    <td>{{ capsule.is_deliverable }}</td>
                                 </tr>
                             {% endfor %}
                         </table>
