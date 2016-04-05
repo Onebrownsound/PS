@@ -9,7 +9,7 @@ from post_classifier.post_classifier import CLASSIFICATION_TRANSLATOR
 from django.core.mail import EmailMessage
 from PS_Prototype.settings import EMAIL_HOST_USER
 
-
+ 
 '''Tasks, for More Detailed behavior see the Helper Functions Below'''
 logger = get_task_logger(__name__)
 
