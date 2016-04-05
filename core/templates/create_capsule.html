@@ -2,7 +2,6 @@
 {% block content %}
     <header class="intro">
         <div class="intro-body">
-            <div class="container">
             <div class="row">
                 <h1>Create Your Capsule</h1>
                 <div class="col-lg-12 text-left ">
@@ -13,8 +12,8 @@
                         {% if form.errors %}
                             {{ form.errors }} <!-- display the form errors if they exist -->
                         {% endif %}
-
-                        <form id='form' class="form-horizontal indigo clear-form" action="" method="POST" enctype="multipart/form-data">
+                        <form id='form' class="form-horizontal indigo clear-form" action="" method="POST"
+                              enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <input type="submit" class="btn btn-default" value="Submit"/>
@@ -23,7 +22,7 @@
                 </div>
             </div>
         </div>
-        </div>
+
     </header>
 {% endblock %}
 
