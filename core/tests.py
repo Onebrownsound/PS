@@ -3,8 +3,9 @@ from .tasks import score_threshold, find_dead_candidates, generic_find_delivery_
 from sklearn.externals import joblib
 from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TRANSLATOR
 from post_classifier.datacombiner import DataCombiner
-from .models import Capsule
+from .models import Capsule, FUTURE_DELIVERY_CHOICES
 from django.contrib.auth.models import User
+import random
 
 
 # Create your tests here.
@@ -25,12 +26,6 @@ class UtilsTestCase(TestCase):
         User.objects.create_user(username='dom', email='dom@g.com', password='dom')
         Capsule.objects.create(activation_type='D', is_active=False, is_deliverable=False, author_twitter='_PSDev',
                                owner=User.objects.get(username='dom'), **dummy_data)
-        Capsule.objects.create(activation_type='D', is_active=True, is_deliverable=False, target_twitter='_PSDev',
-                               delivery_condition='W',
-                               owner=User.objects.get(username='dom'), **dummy_data)
-        # The previous one is sort of hackish, because I do not have a twitter setup that could trigger ML to classify
-        # it's feed as marriage.So we will just have it filter for marriage delivery type but say a successfully
-        # classification is death since _PSDev currently classifies as death.
 
     def test_scoring_functionality(self):
         classifier = joblib.load('./post_classifier/classifier.pkl')
@@ -43,10 +38,35 @@ class UtilsTestCase(TestCase):
         self.assertEqual(score_threshold(passing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), True)
 
     def test_tasks(self):
+        DELIVERY_TYPE_TO_CLASSIFICATION = {'D': 'death', 'M': 'marriage', 'CB': 'baby'}
+        COOKED_BOOK = {
+            'D': ['rip I am so sorry for your loss', 'my deepest condolences should be extended to your family',
+                  'i hate the islanders', 'I love and will miss jon #rip',
+                  'my condolences to mary and her family rip jon'],
+            'M': ['grats to eileen and mark i hope they cherish each other on their special day',
+                  'congratulations to mary and joe on their special day', 'i like turtles',
+                  'congratulations on getting married'],
+            'CB': ['congratulations on baby its a boy!', 'congrats on the new baby',
+                   'to infinity and beyond', 'congratulations on baby its a boy!', 'congratulations on baby its a boy!']
+        }
+
+        # This test actual utilizes the twitter api call in the pipline
         find_dead_candidates()
         self.assertEqual(Capsule.objects.get(pk=1).is_active, True)
-        generic_find_delivery_candidates(delivery_type='W', desired_classification='death')
-        self.assertEqual(Capsule.objects.get(pk=2).is_deliverable, True)
+
+        # Below tests the generic_find_delivery function. We randomly select a delivery choice and the appropriate
+        # respective paramters.
+        for index in range(100000):
+            random_delivery_condition = random.choice(FUTURE_DELIVERY_CHOICES)[0]
+            if random_delivery_condition == 'SD': # Skip dates sincel logic is not implemented TODO implement date logic
+                break
+            dummy_capsule = Capsule(is_active=True, is_deliverable=False, delivery_condition=random_delivery_condition,
+                                    owner=User.objects.get(username='dom'))
+            generic_find_delivery_candidates(use_twitter=False, test_data=COOKED_BOOK[random_delivery_condition],
+                                             test_capsule=dummy_capsule,
+                                             desired_classification=DELIVERY_TYPE_TO_CLASSIFICATION[
+                                                 random_delivery_condition])
+            self.assertEqual(dummy_capsule.is_deliverable, True)
 
 
 class ClassifierTestCase(TestCase):

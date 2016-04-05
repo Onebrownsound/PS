@@ -10,11 +10,9 @@ FUTURE_ACTIVATION_CHOICES = (
 
 FUTURE_DELIVERY_CHOICES = (
     ('SD', 'Specific Date In Future'),
-    ('W', 'Wedding'),
     ('CB', 'Child Birth'),
     ('M', 'Marriage'),
     ('D', 'Death')
-
 )
 
 FUTURE_DELIVERY_DICT = {key: value for (key, value) in FUTURE_DELIVERY_CHOICES}

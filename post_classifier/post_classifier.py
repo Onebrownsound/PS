@@ -79,7 +79,10 @@ def grid_search(sample, classifier):  # Find optimal parameter values given the 
 Make sure the mapping below is symmetric to how the layout to how a given iteration of the classifier is fed.
 AKA if we train a new classifier in a different order aka death before marriage make sure this reflects that.
 """
-CLASSIFICATION_TRANSLATOR = {'marriage': 0, 'death': 1, 'baby': 2, 'garbage': 3}
+
+# Takes lowercase verbose or abbreviation and returns correct int classification
+CLASSIFICATION_TRANSLATOR = {'marriage': 0, 'death': 1, 'baby': 2, 'garbage': 3,
+                             'M': 0, 'D': 1, 'CB': 2}
 
 if __name__ == '__main__':
     docs_new = ['i will miss you bob RIP ', 'congrats on your marriage becky',
@@ -102,12 +105,12 @@ if __name__ == '__main__':
     tweets = DataCombiner(
         filenames=['marriage_tweets.txt', 'death_tweets.txt', 'baby_tweets.txt', 'garbage_tweets.txt'],
         classifications=['marriage', 'death', 'baby', 'garbage'])
-
+    classifications = ['marriage', 'death', 'baby', 'garbage']
     training_tweets, testing_tweets = create_training_testing_data(tweets, 0.80)  # break the tweets up
     # text_clf = create_classifier(training_tweets.data, training_tweets.target)
     text_clf = load_classifier('classifier')
     # sample_tweets = randomly_sample_data(tweets, 400000)
     # grid_search(sample_tweets,text_clf)
-    classify_and_print_test_documents(text_clf, docs_new, tweets.classification_names)
-    evaluate_classifier(text_clf, testing_tweets)
+    # classify_and_print_test_documents(text_clf, COOKED_BOOK['CB'], classifications)
+    # evaluate_classifier(text_clf, testing_tweets)
     # save_classifier(text_clf)
