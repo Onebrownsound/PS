@@ -6,14 +6,16 @@ from data_mining.data_mining import api
 from sklearn.externals import joblib
 from tweepy.error import TweepError
 from post_classifier.post_classifier import CLASSIFICATION_TRANSLATOR
+from django.core.mail import EmailMessage
+from PS_Prototype.settings import EMAIL_HOST_USER
 
 
 '''Tasks, for More Detailed behavior see the Helper Functions Below'''
 logger = get_task_logger(__name__)
 
-
-
 '''Find Inactive Capsules With Death Activation Who Are Dead'''
+
+
 @periodic_task(
     run_every=(crontab(minute='*/1')),
     name="task_find_dead_users",
@@ -25,8 +27,9 @@ def task_find_dead_users():
     logger.info("Searched and marked dead users")
 
 
-
 '''Find Active Marriage Capsules and Mark If Should Be Delivered'''
+
+
 @periodic_task(
     run_every=(crontab(minute='*/2')),
     name="task_mark_marriage_capsules_deliverable",
@@ -38,8 +41,9 @@ def task_mark_marriage_capsules_deliverable():
     logger.info("Searched and activated marriage capsules.")
 
 
-
 '''Find Active Child Birth Capsules and Mark If Should Be Delivered'''''
+
+
 @periodic_task(
     run_every=(crontab(minute='*/2')),
     name="task_mark_child_birth_capsules_deliverable",
@@ -63,6 +67,20 @@ def task_mark_death_capsules_deliverable():
     """Kicks off job for finding activate death capsules that are not marked for delivery"""
     generic_find_delivery_candidates(delivery_type='D', desired_classification='death')
     logger.info("Searched and activated death capsules.")
+
+
+"""Find Active & Deliverable Capsules and Deliver Them"""
+
+
+@periodic_task(
+    run_every=(crontab(minute='*/3')),
+    name="task_mail_man",
+    ignore_result=False
+)
+def task_mail_man():
+    """Kicks off job for mailing"""
+    mail_man()
+    logger.info("Active and Deliverable Capsules Found, Capsules Dispersed, MailMan Let Loose")
 
 
 """Abstracted Helper Functions"""
@@ -147,3 +165,25 @@ def generic_find_delivery_candidates(delivery_type=None, desired_classification=
             print(e.reason)
         except Exception as e:
             print(e.args)
+
+
+def mail_man():
+    """This is the grand daddy cherry on top that is the last step in the Capsule pipeline. Here we scan for Active &&
+    Deliverable Capsules and Dispatch them."""
+    candidate_capsules = Capsule.objects.filter(is_active=True, is_deliverable=True, retired=False)
+
+    if not candidate_capsules:
+        return
+    for candidate in candidate_capsules:
+        try:
+            email = EmailMessage()
+            email.from_email = EMAIL_HOST_USER
+            email.subject = 'Import Message From P.S.'
+            email.body = 'Greetings insert_name,\n\t We at PS extends our deepest condolences to you and your family. Attached to this email is a capsule,a snapshot our client wanted you to have.\n' \
+                         'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'
+            email.to = [candidate.target_email]
+            email.attach_file(candidate.file.path)
+            email.send()
+            #candidate.retired=True #This is commented out for testing purposes TODO Remove for live/demos.
+        except Exception as e:
+            print(e)

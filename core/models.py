@@ -46,6 +46,8 @@ class Capsule(models.Model):
     is_deliverable = models.BooleanField(default=False)
     author_twitter = models.CharField(max_length=40, default='')
     target_twitter = models.CharField(max_length=40, default='')
+    target_email = models.EmailField(blank=False, max_length=45, default='')
+    retired = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id) + " " + self.title + " By: " + self.owner.username

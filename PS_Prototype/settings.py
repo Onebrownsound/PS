@@ -127,3 +127,10 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ENABLE_UTC = True
 
+#For Emailing Capsules/Files
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'PS.DevSquad@gmail.com'
+EMAIL_HOST_PASSWORD = 'Redmen31!'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
