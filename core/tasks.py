@@ -8,11 +8,12 @@ from tweepy.error import TweepError
 from post_classifier.post_classifier import CLASSIFICATION_TO_ML_TARGET_NUMBER
 from django.core.mail import EmailMessage
 from PS_Prototype.settings import EMAIL_HOST_USER
+from datetime import datetime
 
 '''Tasks, for More Detailed behavior see the Helper Functions Below'''
 logger = get_task_logger(__name__)
 
-'''Find Inactive Capsules With Death Activation Who Are Dead'''
+
 
 
 @periodic_task(
@@ -26,7 +27,7 @@ def task_find_dead_users():
     logger.info("Searched and marked dead users")
 
 
-'''Find Active Marriage Capsules and Mark If Should Be Delivered'''
+
 
 
 @periodic_task(
@@ -40,7 +41,6 @@ def task_mark_marriage_capsules_deliverable():
     logger.info("Searched and activated marriage capsules.")
 
 
-'''Find Active Child Birth Capsules and Mark If Should Be Delivered'''''
 
 
 @periodic_task(
@@ -54,7 +54,7 @@ def task_mark_child_birth_capsules_deliverable():
     logger.info("Searched and activated baby capsules.")
 
 
-"""Find Active Death Capsules and Mark If Should Be Delivered"""
+
 
 
 @periodic_task(
@@ -68,7 +68,15 @@ def task_mark_death_capsules_deliverable():
     logger.info("Searched and activated death capsules.")
 
 
-"""Find Active & Deliverable Capsules and Deliver Them"""
+@periodic_task(
+    run_every=(crontab(minute='*/10')),
+    name="task_mark_date_capsules_deliverable",
+    ignore_result=False
+)
+def task_mark_date_capsules_deliverable():
+    """Kicks off job for finding activate specific date capsules that are not marked for delivery"""
+    find_deliverable_by_date_candidates()
+    logger.info("Searched and activated specific date capsules.")
 
 
 @periodic_task(
@@ -147,9 +155,12 @@ def generic_find_delivery_candidates(delivery_type=None, desired_classification=
     classifier = joblib.load('./post_classifier/classifier.pkl')
     # Get all capsules which are of a certain delivery_type and have not been marked for delivery.
     # AKA delivery candidates
-    candidate_capsules = Capsule.objects.filter(delivery_condition=delivery_type, is_deliverable=False, is_active=True)
-    if test_capsule:
+
+    if test_capsule is not None:
         candidate_capsules = [test_capsule]
+    else:
+        candidate_capsules = Capsule.objects.filter(delivery_condition=delivery_type, is_deliverable=False,
+                                                    is_active=True)
     if not candidate_capsules:
         return
     for candidate in candidate_capsules:
@@ -163,13 +174,29 @@ def generic_find_delivery_candidates(delivery_type=None, desired_classification=
                 recently_received_tweets = [tweet.text for tweet in recently_received_tweets]
             else:
                 recently_received_tweets = test_data
-            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER[desired_classification]):
+            if score_threshold(recently_received_tweets, classifier,
+                               CLASSIFICATION_TO_ML_TARGET_NUMBER[desired_classification]):
                 candidate.is_deliverable = True
                 candidate.save()
         except TweepError as e:
             print(e.reason)
         except Exception as e:
             print(e.args)
+
+
+def find_deliverable_by_date_candidates():
+    candidate_capsules = Capsule.objects.filter(delivery_condition='SD', is_deliverable=False,
+                                                is_active=True)  # 'SD' is for specific date
+
+    today_date = datetime.now()  # Create datetime object then extract date component
+    today_date = datetime.date(today_date)
+    for candidate in candidate_capsules:
+
+        if candidate.delivery_date <= today_date:
+            print('found a winner')
+            candidate.is_deliverable = True
+            candidate.save()
+
 
 
 def mail_man():
@@ -186,7 +213,8 @@ def mail_man():
             email.subject = 'Import Message From P.S.'
 
             email.body = 'Greetings {},\n\t We at PS extends our deepest condolences to you and your family. Attached to this email is a capsule,a snapshot our client wanted you to have.\n' \
-                         'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'.format(candidate.target_firstname)
+                         'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'.format(
+                candidate.target_firstname)
             email.to = [candidate.target_email]
             email.attach_file(candidate.file.path)
             email.send()

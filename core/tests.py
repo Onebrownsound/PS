@@ -1,11 +1,14 @@
 from django.test import TestCase
-from .tasks import score_threshold, find_dead_candidates, generic_find_delivery_candidates
+from .tasks import score_threshold, find_dead_candidates, generic_find_delivery_candidates, \
+    find_deliverable_by_date_candidates
 from sklearn.externals import joblib
-from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER
+from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, \
+    CLASSIFICATION_TO_ML_TARGET_NUMBER
 from post_classifier.datacombiner import DataCombiner
 from .models import Capsule, FUTURE_DELIVERY_CHOICES
 from django.contrib.auth.models import User
 import random
+from datetime import date,datetime
 
 
 # Create your tests here.
@@ -68,6 +71,18 @@ class UtilsTestCase(TestCase):
                                              desired_classification=delivery_abbreviation_to_verbose[
                                                  random_delivery_condition])
             self.assertEqual(dummy_capsule.is_deliverable, True)
+
+    def test_date_deliverable_task(self):
+
+        past_date= date(1777,7,4)
+        test_capsule = Capsule.objects.create(activation_type='D', is_active=True, is_deliverable=False,
+                                              delivery_condition='SD',
+                                              author_twitter='_PSDev',
+                                              owner=User.objects.get(username='dom'), delivery_date=past_date)
+
+        find_deliverable_by_date_candidates()
+
+        self.assertEqual(Capsule.objects.get(delivery_date=past_date).is_deliverable,True)
 
 
 class ClassifierTestCase(TestCase):

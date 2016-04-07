@@ -34,7 +34,7 @@ class LoginForm(forms.Form):
 
 
 class CapsuleForm(forms.ModelForm):
-    time_delivery = forms.DateField(widget=forms.SelectDateWidget())
+    delivery_date = forms.DateField(widget=forms.SelectDateWidget())
     author_twitter = forms.CharField(max_length=40, label='Your twitter ID:', help_text='Without @ Symbol', )
     target_twitter = forms.CharField(max_length=40, label='Target twitter ID:', help_text='Without @ Symbol')
     message = forms.CharField(max_length=1000)
@@ -42,6 +42,6 @@ class CapsuleForm(forms.ModelForm):
     class Meta:
         model = Capsule
         fields = (
-            'title', 'file', 'message', 'activation_type', 'delivery_condition', 'time_delivery', 'author_twitter',
+            'title', 'file', 'message', 'activation_type', 'delivery_condition', "delivery_date", 'author_twitter',
             'target_twitter', 'target_email','target_firstname'
         )
