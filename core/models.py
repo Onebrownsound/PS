@@ -45,6 +45,7 @@ class Capsule(models.Model):
     author_twitter = models.CharField(max_length=40, default='')
     target_twitter = models.CharField(max_length=40, default='')
     target_email = models.EmailField(blank=False, max_length=45, default='')
+    target_firstname = models.CharField(blank=True,default='',max_length=30)
     retired = models.BooleanField(default=False)
 
     def __str__(self):

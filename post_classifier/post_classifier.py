@@ -81,8 +81,8 @@ AKA if we train a new classifier in a different order aka death before marriage 
 """
 
 # Takes lowercase verbose or abbreviation and returns correct int classification
-CLASSIFICATION_TRANSLATOR = {'marriage': 0, 'death': 1, 'baby': 2, 'garbage': 3,
-                             'M': 0, 'D': 1, 'CB': 2}
+CLASSIFICATION_TO_ML_TARGET_NUMBER = {'marriage': 0, 'death': 1, 'baby': 2, 'garbage': 3,
+                             'M': 0, 'D': 1, 'CB': 2,'G':3}
 
 if __name__ == '__main__':
     docs_new = ['i will miss you bob RIP ', 'congrats on your marriage becky',

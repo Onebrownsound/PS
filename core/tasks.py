@@ -5,7 +5,7 @@ from .models import Capsule
 from data_mining.data_mining import api
 from sklearn.externals import joblib
 from tweepy.error import TweepError
-from post_classifier.post_classifier import CLASSIFICATION_TRANSLATOR
+from post_classifier.post_classifier import CLASSIFICATION_TO_ML_TARGET_NUMBER
 from django.core.mail import EmailMessage
 from PS_Prototype.settings import EMAIL_HOST_USER
 
@@ -107,7 +107,7 @@ def find_dead_candidates():
                 username = candidate.author_twitter  # Incase a user was naughty and included @ despite the directions
             recently_received_tweets = api.search(q=username, count=20)
             recently_received_tweets = [tweet.text for tweet in recently_received_tweets]  # <3 generators extract text
-            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TRANSLATOR['death']):
+            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER['death']):
                 candidate.is_active = True
                 candidate.save()
         except TweepError as e:
@@ -153,7 +153,7 @@ def generic_find_delivery_candidates(delivery_type=None, desired_classification=
     if not candidate_capsules:
         return
     for candidate in candidate_capsules:
-        # try:
+        try:
             if use_twitter:  # Optional flag to override using twitter api for testing purposes
                 if candidate.target_twitter[0] != '@':
                     username = '@' + candidate.target_twitter
@@ -163,14 +163,13 @@ def generic_find_delivery_candidates(delivery_type=None, desired_classification=
                 recently_received_tweets = [tweet.text for tweet in recently_received_tweets]
             else:
                 recently_received_tweets = test_data
-            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TRANSLATOR[desired_classification]):
+            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER[desired_classification]):
                 candidate.is_deliverable = True
                 candidate.save()
-
-        # except TweepError as e:
-        #     print(e.reason)
-        # except Exception as e:
-        #     print(e.args)
+        except TweepError as e:
+            print(e.reason)
+        except Exception as e:
+            print(e.args)
 
 
 def mail_man():
@@ -185,9 +184,9 @@ def mail_man():
             email = EmailMessage()
             email.from_email = EMAIL_HOST_USER
             email.subject = 'Import Message From P.S.'
-            # TODO add a target name field to the model so we can use it in the emails body
-            email.body = 'Greetings insert_name,\n\t We at PS extends our deepest condolences to you and your family. Attached to this email is a capsule,a snapshot our client wanted you to have.\n' \
-                         'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'
+
+            email.body = 'Greetings {},\n\t We at PS extends our deepest condolences to you and your family. Attached to this email is a capsule,a snapshot our client wanted you to have.\n' \
+                         'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'.format(candidate.target_firstname)
             email.to = [candidate.target_email]
             email.attach_file(candidate.file.path)
             email.send()

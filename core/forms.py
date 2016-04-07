@@ -43,5 +43,5 @@ class CapsuleForm(forms.ModelForm):
         model = Capsule
         fields = (
             'title', 'file', 'message', 'activation_type', 'delivery_condition', 'time_delivery', 'author_twitter',
-            'target_twitter', 'target_email'
+            'target_twitter', 'target_email','target_firstname'
         )

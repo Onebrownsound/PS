@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .tasks import score_threshold, find_dead_candidates, generic_find_delivery_candidates
 from sklearn.externals import joblib
-from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TRANSLATOR
+from post_classifier.post_classifier import randomly_sample_data, evaluate_classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER
 from post_classifier.datacombiner import DataCombiner
 from .models import Capsule, FUTURE_DELIVERY_CHOICES
 from django.contrib.auth.models import User
@@ -34,12 +34,12 @@ class UtilsTestCase(TestCase):
         passing_data = ['I am so sorry for your loss', 'cann somebody pass me the milk',
                         'rip to bobby my deepest condolences for his family', '#rip to the best friend I ever had',
                         'the world lost someone amazing today RIP pdiddy']
-        self.assertEqual(score_threshold(failing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), False)
-        self.assertEqual(score_threshold(passing_data, classifier, CLASSIFICATION_TRANSLATOR['death']), True)
+        self.assertEqual(score_threshold(failing_data, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER['death']), False)
+        self.assertEqual(score_threshold(passing_data, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER['death']), True)
 
     def test_tasks(self):
-        DELIVERY_TYPE_TO_CLASSIFICATION = {'D': 'death', 'M': 'marriage', 'CB': 'baby'}
-        COOKED_BOOK = {
+        delivery_abbreviation_to_verbose = {'D': 'death', 'M': 'marriage', 'CB': 'baby'}
+        delivery_abbreviation_to_faketweets = {
             'D': ['rip I am so sorry for your loss', 'my deepest condolences should be extended to your family',
                   'i hate the islanders', 'I love and will miss jon #rip',
                   'my condolences to mary and her family rip jon'],
@@ -58,13 +58,14 @@ class UtilsTestCase(TestCase):
         # respective paramters.
         for index in range(100000):
             random_delivery_condition = random.choice(FUTURE_DELIVERY_CHOICES)[0]
-            if random_delivery_condition == 'SD': # Skip dates sincel logic is not implemented TODO implement date logic
+            if random_delivery_condition == 'SD':  # Skip dates sincel logic is not implemented TODO implement date logic
                 break
             dummy_capsule = Capsule(is_active=True, is_deliverable=False, delivery_condition=random_delivery_condition,
                                     owner=User.objects.get(username='dom'))
-            generic_find_delivery_candidates(use_twitter=False, test_data=COOKED_BOOK[random_delivery_condition],
+            generic_find_delivery_candidates(use_twitter=False,
+                                             test_data=delivery_abbreviation_to_faketweets[random_delivery_condition],
                                              test_capsule=dummy_capsule,
-                                             desired_classification=DELIVERY_TYPE_TO_CLASSIFICATION[
+                                             desired_classification=delivery_abbreviation_to_verbose[
                                                  random_delivery_condition])
             self.assertEqual(dummy_capsule.is_deliverable, True)
 
