@@ -5,7 +5,6 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 
 
-
 class RegisterUserForm(forms.ModelForm):
     username = forms.CharField(required=True)
     email = forms.EmailField(required=True, validators=[validators.validate_email])
@@ -26,7 +25,7 @@ class RegisterUserForm(forms.ModelForm):
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username:', max_length=100, required=True)
-    password = forms.CharField(label='Password:', max_length=100, required=True,widget=forms.PasswordInput())
+    password = forms.CharField(label='Password:', max_length=100, required=True, widget=forms.PasswordInput())
 
     class Meta:
         model = User
@@ -43,5 +42,5 @@ class CapsuleForm(forms.ModelForm):
         model = Capsule
         fields = (
             'title', 'file', 'message', 'activation_type', 'delivery_condition', "delivery_date", 'author_twitter',
-            'target_twitter', 'target_email','target_firstname'
+            'target_twitter', 'target_email', 'target_firstname'
         )

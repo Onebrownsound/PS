@@ -9,11 +9,10 @@ from post_classifier.post_classifier import CLASSIFICATION_TO_ML_TARGET_NUMBER
 from django.core.mail import EmailMessage
 from PS_Prototype.settings import EMAIL_HOST_USER
 from datetime import datetime
+import os
 
 '''Tasks, for More Detailed behavior see the Helper Functions Below'''
 logger = get_task_logger(__name__)
-
-
 
 
 @periodic_task(
@@ -27,9 +26,6 @@ def task_find_dead_users():
     logger.info("Searched and marked dead users")
 
 
-
-
-
 @periodic_task(
     run_every=(crontab(minute='*/2')),
     name="task_mark_marriage_capsules_deliverable",
@@ -41,8 +37,6 @@ def task_mark_marriage_capsules_deliverable():
     logger.info("Searched and activated marriage capsules.")
 
 
-
-
 @periodic_task(
     run_every=(crontab(minute='*/2')),
     name="task_mark_child_birth_capsules_deliverable",
@@ -52,9 +46,6 @@ def task_mark_child_birth_capsules_deliverable():
     """Kicks off job for finding activate child birth capsules that are not marked for delivery"""
     generic_find_delivery_candidates(delivery_type='CB', desired_classification='baby')
     logger.info("Searched and activated baby capsules.")
-
-
-
 
 
 @periodic_task(
@@ -193,17 +184,15 @@ def find_deliverable_by_date_candidates():
     for candidate in candidate_capsules:
 
         if candidate.delivery_date <= today_date:
-            print('found a winner')
             candidate.is_deliverable = True
             candidate.save()
-
 
 
 def mail_man():
     """This is the grand daddy cherry on top that is the last step in the Capsule pipeline. Here we scan for Active &&
     Deliverable Capsules and Dispatch them."""
     candidate_capsules = Capsule.objects.filter(is_active=True, is_deliverable=True, retired=False)
-
+    file_upload_prefix = os.getcwd() + '/'
     if not candidate_capsules:
         return
     for candidate in candidate_capsules:
@@ -216,8 +205,9 @@ def mail_man():
                          'Take solace in knowing the owner of your capsule, forged it with you in their mind. \nOur Deepest Sympathies,\nP.S. Team'.format(
                 candidate.target_firstname)
             email.to = [candidate.target_email]
-            email.attach_file(candidate.file.path)
+            # This is much more portable as long as /uploads/capsule/files/filename.ext is the format for file uploads
+            email.attach_file(file_upload_prefix + '/'.join(candidate.file.path.split('/')[-4::]))
             email.send()
             # candidate.retired=True #TODO Remove for live/demos.
         except Exception as e:
-            print(e)
+            print(e.args)
