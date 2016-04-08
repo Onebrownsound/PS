@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from .models import Capsule
 from django.core import validators
 from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
+from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -34,13 +37,24 @@ class LoginForm(forms.Form):
 
 class CapsuleForm(forms.ModelForm):
     delivery_date = forms.DateField(widget=forms.SelectDateWidget())
-    author_twitter = forms.CharField(max_length=40, label='Your twitter ID:', help_text='Without @ Symbol', )
-    target_twitter = forms.CharField(max_length=40, label='Target twitter ID:', help_text='Without @ Symbol')
+    author_twitter = forms.CharField(max_length=40, label='Your twitter ID:')
+    target_twitter = forms.CharField(max_length=40, label='Target twitter ID:')
     message = forms.CharField(max_length=1000)
     target_email = forms.EmailField()
+
     class Meta:
         model = Capsule
         fields = (
             'title', 'file', 'message', 'activation_type', 'delivery_condition', "delivery_date", 'author_twitter',
             'target_twitter', 'target_email', 'target_firstname'
         )
+        # Uni-form
+
+    helper = FormHelper()
+    helper.form_class = 'form-group '
+
+    helper.layout = Layout(
+        Field('title', css_class='indigo')
+
+
+    )

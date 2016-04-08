@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core'
+    'core',
+    'crispy_forms',
 
 ]
 
@@ -134,3 +135,4 @@ EMAIL_HOST_PASSWORD = 'Redmen31!'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
