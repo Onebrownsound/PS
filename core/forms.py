@@ -34,6 +34,22 @@ class LoginForm(forms.Form):
         model = User
         fields = ('username', 'password')
 
+    helper = FormHelper()
+    helper.form_class = 'form-horizontal indigo'
+    helper.form_method = 'POST'
+
+    helper.label_class = 'col-lg-4'
+    helper.field_class = 'col-lg-4'
+    helper.layout = Layout(
+        Field('username', ),
+        Field('password', ),
+        FormActions(
+            Submit('submit', 'Submit', css_class='indigo btn btn-default'),
+            Button('cancel', 'Cancel', css_class='indigo btn btn-default')
+        ),
+
+    )
+
 
 class CapsuleForm(forms.ModelForm):
     delivery_date = forms.DateField(widget=forms.SelectDateWidget())

@@ -9,10 +9,10 @@ FUTURE_ACTIVATION_CHOICES = (
 )
 
 FUTURE_DELIVERY_CHOICES = (
-    ('SD', 'Specific Date In Future'),
     ('CB', 'Child Birth'),
     ('M', 'Marriage'),
-    ('D', 'Death')
+    ('D', 'Death'),
+    ('SD', 'Specific Date In Future'),
 )
 
 FUTURE_DELIVERY_DICT = {key: value for (key, value) in FUTURE_DELIVERY_CHOICES}
@@ -37,7 +37,7 @@ class Capsule(models.Model):
     message = models.TextField(max_length=1000, blank=True, default='')
     file = models.FileField(blank=True, upload_to=partial(make_rng_filename, 'files'), null=True)
     activation_type = models.CharField(max_length=10, choices=FUTURE_ACTIVATION_CHOICES, default='D')
-    delivery_condition = models.CharField(max_length=10, choices=FUTURE_DELIVERY_CHOICES, default='SD')
+    delivery_condition = models.CharField(max_length=10, choices=FUTURE_DELIVERY_CHOICES, default='D')
     delivery_date = models.DateField(blank=True, null=True)
     owner = models.ForeignKey(User)
     is_active = models.BooleanField(default=False)
