@@ -1,22 +1,18 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
     <header class="intro">
         <div class="intro-body">
+            <br> <br>
             <h1>Create Your Capsule</h1>
-            {% if invalid %}
-                <p>Error Message Here</p>
-            {% endif %}
-            {% if form.errors %}
-                {{ form.errors }} <!-- display the form errors if they exist -->
-            {% endif %}
-            <form id='form' class="form-horizontal indigo form-group-sm " action="" method="POST"
-                  enctype="multipart/form-data">
-                {% csrf_token %}
-                {% load crispy_forms_tags %}
-                {{ form|crispy }}
-                <input class="submit" type="submit" value="Submit">
-            </form>
+
+
+            {% crispy form %}
+
         </div>
     </header>
+    <!-- Custom Capsule JavaScript -->
+    {% load staticfiles %}
+    <script src="{% static "core/js/create_capsule.js" %}"></script>
 {% endblock %}
 

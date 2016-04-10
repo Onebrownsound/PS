@@ -5,7 +5,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
-from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
+from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, TabHolder, Tab, FormActions
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -45,16 +45,31 @@ class CapsuleForm(forms.ModelForm):
     class Meta:
         model = Capsule
         fields = (
-            'title', 'file', 'message', 'activation_type', 'delivery_condition', "delivery_date", 'author_twitter',
+            'title', 'file', 'message', 'activation_type', 'delivery_condition', 'author_twitter',
             'target_twitter', 'target_email', 'target_firstname'
         )
-        # Uni-form
 
     helper = FormHelper()
-    helper.form_class = 'form-group '
+    helper.form_class = 'form-horizontal indigo'
+    helper.form_method = 'POST'
+
+    helper.label_class = 'col-lg-4'
+    helper.field_class = 'col-lg-4'
 
     helper.layout = Layout(
-        Field('title', css_class='indigo')
-
+        Field('title', ),
+        Field('file', ),
+        Field('message', ),
+        Field('activation_type', ),
+        Field('delivery_condition', ),
+        Field('delivery_date'),
+        PrependedText('author_twitter', '@', placeholder="username"),
+        PrependedText('target_twitter', '@', placeholder="username"),
+        Field('target_email'),
+        Field('target_firstname', ),
+        FormActions(
+            Submit('submit', 'Submit', css_class='indigo btn btn-default'),
+            Button('cancel', 'Cancel', css_class='indigo btn btn-default')
+        ),
 
     )
