@@ -25,4 +25,4 @@ $('#id_delivery_condition').change(function(){
     else{
         $('#div_id_delivery_date').addClass('hidden');
     }
-});
+});  
