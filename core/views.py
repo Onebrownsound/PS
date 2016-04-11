@@ -52,16 +52,16 @@ def create_capsule_view(request):  # View for creating time capsules
 
 def register(request):
     if request.method == 'POST':
-        user_form = RegisterUserForm(data=request.POST)
-        if user_form.is_valid():
-            user = User.objects.create_user(user_form['username'].value(), user_form['email'].value(),
-                                            user_form['password'].value())
+        form = RegisterUserForm(data=request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(form['username'].value(), form['email'].value(),
+                                            form['password'].value())
             user.save()
             return redirect('login_view')
     else:
-        user_form = RegisterUserForm()
+        form = RegisterUserForm()
 
-    return render(request, 'register.html', {'user_form': user_form})
+    return render(request, 'register.html', {'form': form})
 
 
 @login_required(login_url='login')
