@@ -106,7 +106,9 @@ def find_dead_candidates():
                 username = candidate.author_twitter  # Incase a user was naughty and included @ despite the directions
             recently_received_tweets = api.search(q=username, count=20)
             recently_received_tweets = [tweet.text for tweet in recently_received_tweets]  # <3 generators extract text
-            if score_threshold(recently_received_tweets, classifier, CLASSIFICATION_TO_ML_TARGET_NUMBER['death']):
+            should_activate = score_threshold(recently_received_tweets, classifier,
+                                              CLASSIFICATION_TO_ML_TARGET_NUMBER['death'])
+            if should_activate:
                 candidate.is_active = True
                 candidate.save()
         except TweepError as e:
@@ -136,7 +138,8 @@ def score_threshold(data, clf, success_classification, threshold=0.45):
     for predicted_classification in predicted_results:
         if predicted_classification == success_classification:
             score += 1
-    if float(score / number_of_tweets) >= threshold:
+    score_frequency = float(score / number_of_tweets)
+    if (score_frequency >= threshold):
         return True
     return False
 

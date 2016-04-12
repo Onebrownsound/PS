@@ -53,13 +53,14 @@ class UtilsTestCase(TestCase):
                    'to infinity and beyond', 'congratulations on baby its a boy!', 'congratulations on baby its a boy!']
         }
 
-        # This test actual utilizes the twitter api call in the pipline
+        # This test actual utilizes the twitter api call in the pipeline. Remember every now and then to write new death
+        # tweets @_PSDev. Old ones no longer show up on the api search call.
         find_dead_candidates()
         self.assertEqual(Capsule.objects.get(pk=1).is_active, True)
 
         # Below tests the generic_find_delivery function. We randomly select a delivery choice and the appropriate
-        # respective paramters.
-        for index in range(100000):
+        # respective parameters.
+        for index in range(100):
             random_delivery_condition = random.choice(FUTURE_DELIVERY_CHOICES)[0]
             if random_delivery_condition == 'SD':  # Skip dates sincel logic is not implemented TODO implement date logic
                 break
