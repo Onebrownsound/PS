@@ -15,3 +15,11 @@ def reset_capsules_randomly():
             capsule.is_deliverable = False
             capsule.is_active = False
         capsule.save()
+
+
+def reset_all_capsules():
+    capsules = Capsule.objects.all()
+    for capsule in capsules:
+        capsule.is_active = False
+        capsule.is_deliverable = False
+        capsule.save()
