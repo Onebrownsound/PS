@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, TabHolder, Tab, FormActions
+import re
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -115,4 +116,28 @@ class CapsuleForm(forms.ModelForm):
             Button('cancel', 'Cancel', css_class='indigo btn btn-default')
         ),
 
+    )
+
+
+class ClassifyForm(forms.Form):
+    test_tweet = forms.CharField(max_length=200, label='Test Tweet:')
+
+    def clean_test_tweet(self):
+        cleaned_tweet = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|(RT)", " ",
+                                        self.cleaned_data['test_tweet']).split())
+        return cleaned_tweet
+
+    helper = FormHelper()
+    helper.form_class = 'form-horizontal indigo'
+    helper.form_method = 'POST'
+
+    helper.label_class = 'col-lg-4'
+    helper.field_class = 'col-lg-4'
+
+    helper.layout = Layout(
+        Field('test_tweet'),
+        FormActions(
+            Submit('submit', 'Submit', css_class='indigo btn btn-default'),
+            Button('cancel', 'Cancel', css_class='indigo btn btn-default')
+        ),
     )

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <header class="intro">
+        <div class="intro-body">
+            <h2> Current classification:</h2> <h1>{{ classification }}</h1>
+            <h2> Cleaned Tweet:</h2> <h5>{{ cleaned_tweet }}</h5>
+            {% load crispy_forms_tags %}
+            {% crispy form %}
+        </div>
+    </header>
+{% endblock %}
+
+
+

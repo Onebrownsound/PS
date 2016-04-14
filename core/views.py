@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import RegisterUserForm, LoginForm, CapsuleForm
+from .forms import RegisterUserForm, LoginForm, CapsuleForm, ClassifyForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Capsule, FUTURE_DELIVERY_DICT
-
+from .models import Capsule
+from .utils import translate_delivery_condition
+from sklearn.externals import joblib
+from post_classifier.post_classifier import INT_TO_CLASSIFICATION_STRING
 
 '''View Functions Live Below'''
 
@@ -75,19 +77,19 @@ def display_capsules_view(request):
         return render(request, 'display_capsules.html', {'capsules': capsules})
 
 
-'''Helper Functions Live Below'''
-
-
-def translate_delivery_condition(ax):
-    """
-    Takes in a list of Capsule Model objects. Translates short delivery condition abbreviation to the verbose definition
-    AKA 'M' -> 'Marriage". Import to note this does not save to the db. Make sure this never happens
-
-    Args:
-        ax:list of Capsule Model objects
-    Output:
-        ax: list of Capsule Model objects with delivery_condition expressed verbosely.
-    """
-    for data in ax:
-        data.delivery_condition = FUTURE_DELIVERY_DICT[data.delivery_condition]
-    return ax
+@login_required(login_url='login')
+def display_classify_view(request):
+    classification = 'None'
+    cleaned_tweet = 'None'
+    if request.method == 'POST':
+        form = ClassifyForm(data=request.POST)
+        if form.is_valid():
+            classifier = joblib.load('./post_classifier/classifier.pkl')
+            predicted_classifications = classifier.predict([form.cleaned_data['test_tweet']])
+            classification = INT_TO_CLASSIFICATION_STRING[predicted_classifications[0]]
+            cleaned_tweet = form.cleaned_data['test_tweet']
+    else:
+        form = ClassifyForm()
+        classification = 'None'
+    return render(request, 'display_classification.html',
+                  {'form': form, 'classification': classification, 'cleaned_tweet': cleaned_tweet})
