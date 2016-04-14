@@ -13,7 +13,7 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
         if form.is_valid():
-            user = authenticate(username=form['username'].value(), password=form['password'].value())
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
                 return redirect('home')
@@ -54,8 +54,8 @@ def register(request):
     if request.method == 'POST':
         form = RegisterUserForm(data=request.POST)
         if form.is_valid():
-            user = User.objects.create_user(form['username'].value(), form['email'].value(),
-                                            form['password'].value())
+            user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'],
+                                            form.cleaned_data['password'])
             user.save()
             return redirect('login_view')
     else:

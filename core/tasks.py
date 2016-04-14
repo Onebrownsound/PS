@@ -211,6 +211,7 @@ def mail_man():
             # This is much more portable as long as /uploads/capsule/files/filename.ext is the format for file uploads
             email.attach_file(file_upload_prefix + '/'.join(candidate.file.path.split('/')[-4::]))
             email.send()
-            # candidate.retired=True #TODO Remove for live/demos.
+            candidate.retired = True
+            candidate.save()
         except Exception as e:
             print(e.args)

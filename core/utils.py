@@ -22,4 +22,5 @@ def reset_all_capsules():
     for capsule in capsules:
         capsule.is_active = False
         capsule.is_deliverable = False
+        capsule.retired = False
         capsule.save()
