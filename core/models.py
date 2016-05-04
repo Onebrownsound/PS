@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from functools import partial
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 FUTURE_ACTIVATION_CHOICES = (
@@ -50,3 +51,6 @@ class Capsule(models.Model):
 
     def __str__(self):
         return str(self.id) + " " + self.title + " By: " + self.owner.username
+
+    def get_absolute_url(self):
+        return reverse('capsule-detail',kwargs={'pk':self.pk})

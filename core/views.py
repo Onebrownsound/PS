@@ -7,6 +7,8 @@ from .models import Capsule
 from .utils import translate_delivery_condition
 from sklearn.externals import joblib
 from post_classifier.post_classifier import INT_TO_CLASSIFICATION_STRING
+from django.views.generic.edit import UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
 
 '''View Functions Live Below'''
 
@@ -64,6 +66,25 @@ def register(request):
         form = RegisterUserForm()
 
     return render(request, 'register.html', {'form': form})
+
+
+class CapsuleUpdate(UpdateView):
+    #TODO Require login figure that out
+    model = Capsule
+    form_class = CapsuleForm
+    template_name = 'edit_capsule.html'
+    success_url = '/capsules'
+
+
+class CapsuleDelete(DeleteView):
+    #TODO Really need to clean up this logic and check if auth'd user owns this capsule as long as requiring login
+    model = Capsule
+    success_url = reverse_lazy('display_capsules_view')
+    template_name = 'confirm_capsule_delete.html'
+    form_class = CapsuleForm
+
+    def get(self,request,pk):
+        return render(request, self.template_name, {'pk': pk})
 
 
 @login_required(login_url='login')

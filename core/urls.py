@@ -9,5 +9,7 @@ urlpatterns = [
     url(r'^create_capsule/$', views.create_capsule_view, name='create_capsule_view'),
     url(r'^capsules/$', views.display_capsules_view, name='display_capsules_view'),
     url(r'^classify/$', views.display_classify_view, name='display_classify_view'),
+    url(r'^capsule/(?P<pk>[0-9]+)/$',views.CapsuleUpdate.as_view(),name='capsule-update'),
+    url(r'^capsule/delete/(?P<pk>[0-9]+)/$', views.CapsuleDelete.as_view(), name='capsule_delete'),
 
 ]

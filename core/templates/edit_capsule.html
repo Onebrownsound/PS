@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <header class="intro">
+        <div class="intro-body">
+            <br> <br>
+            <h1>Edit Your Capsule</h1>
+            {% crispy form %}
+
+
+        </div>
+    </header>
+    <!-- Custom Capsule JavaScript -->
+    {% load staticfiles %}
+    <!-- jQuery -->
+    <script src="{% static "core/js/jquery.js" %}"></script>
+    <script src="{% static "core/js/create_capsule.js" %}"></script>
+{% endblock %}
