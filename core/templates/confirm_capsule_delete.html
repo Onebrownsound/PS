@@ -5,6 +5,15 @@
         <div class="intro-body">
             <br> <br>
             <h1>ARE YOU SURE YOU WANT TO DELETE THIS CAPSULE!</h1>
+
+            <ul class="list-group indigo">
+                <li class="list-group-item">Title: {{ capsule.title }}</li>
+                <li class="list-group-item">Message: {{ capsule.message }}</li>
+                <li class="list-group-item">File Name: {{ capsule.file }}</li>
+                <li class="list-group-item">Recipient First Name: {{ capsule.target_firstname }}</li>
+                <li class="list-group-item">Recipient Twitter: {{ capsule.target_twitter }}</li>
+                <li class="list-group-item">Recipient Email: {{ capsule.target_email }}</li>
+            </ul>
             <form class="indigo" method="POST" action="">
                 {% csrf_token %}<input type="submit" value="DELETE">
             </form>

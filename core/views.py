@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterUserForm, LoginForm, CapsuleForm, ClassifyForm
 from django.contrib.auth.models import User
@@ -8,8 +8,9 @@ from .utils import translate_delivery_condition
 from sklearn.externals import joblib
 from post_classifier.post_classifier import INT_TO_CLASSIFICATION_STRING
 from django.views.generic.edit import UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy,reverse
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404, HttpResponse
 
 '''View Functions Live Below'''
 
@@ -77,9 +78,29 @@ class CapsuleUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'edit_capsule.html'
     success_url = '/capsules'
 
+    # Here we override the UpdateViews get method. Do some authorization/model checking.
+    # Then Resume the original UpdateViews.get() method, because we want that "original" behavior of UpdateView.get()
+    def get(self, request, pk):
+        try:
+            requested_capsule = get_object_or_404(Capsule, pk=pk)
+        except:
+            raise Http404("We're Sorry No Capsule Matches That Query")
+        if requested_capsule.owner_id != request.user.id:
+            return HttpResponse('Unauthorized Access', status=403)
+        return super(CapsuleUpdate, self).get(request)  # Isn't OOP awesome?
+
+    def post(self, request, pk, **kwargs):
+        try:
+            requested_capsule = get_object_or_404(Capsule, pk=pk)
+        except:
+            raise Http404("We're Sorry No Capsule Matches That Query")
+        if requested_capsule.owner_id != request.user.id:
+            return HttpResponse('Unauthorized Access', status=403)
+        return super(CapsuleUpdate, self).post(request, pk, **kwargs)  # Isn't OOP awesome?
+
 
 class CapsuleDelete(LoginRequiredMixin, DeleteView):
-    # TODO Really need to clean up this logic and check if auth'd user owns this capsule 
+    # TODO Really need to clean up this logic and check if auth'd user owns this capsule
     login_url = '/login'
     redirect_field_name = ''
     model = Capsule
@@ -88,7 +109,23 @@ class CapsuleDelete(LoginRequiredMixin, DeleteView):
     form_class = CapsuleForm
 
     def get(self, request, pk):
-        return render(request, self.template_name, {'pk': pk})
+        #TODO Make the template pretty it looks like garbo
+        try:
+            requested_capsule = get_object_or_404(Capsule, pk=pk)
+        except:
+            raise Http404("We're Sorry No Capsule Matches That Query")
+        if requested_capsule.owner_id != request.user.id:
+            return HttpResponse('Unauthorized Access', status=403)
+        return render(request, self.template_name, {'pk': pk, 'capsule': requested_capsule})
+
+    def post(self, request, pk, **kwargs):
+        try:
+            requested_capsule = get_object_or_404(Capsule, pk=pk)
+        except:
+            raise Http404("We're Sorry No Capsule Matches That Query")
+        if requested_capsule.owner_id != request.user.id:
+            return HttpResponse('Unauthorized Access', status=403)
+        return super(CapsuleUpdate, self).post(request, pk, **kwargs)  # Isn't OOP awesome?
 
 
 @login_required(login_url='login')
