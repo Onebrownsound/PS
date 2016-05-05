@@ -21,11 +21,13 @@
 
                             {% for capsule in capsules %}
                                 <tr>
-                                    <td>{{ capsule.title }}</td>
+                                    <td> <a href="{%  url 'capsule_delete' pk=capsule.pk %}" > <span class="glyphicon glyphicon-remove"> </span></a>
+                                        <a href="{% url 'capsule-update' pk=capsule.pk %}"> <span class="glyphicon glyphicon-edit"> </span></a> {{ capsule.title }}
+                                    </td>
                                     <td>{{ capsule.created }}</td>
                                     <td>{{ capsule.author_twitter }}</td>
                                     <td>{{ capsule.target_twitter }}</td>
-                                    <td>{{ capsule.delivery_condition}}</td>
+                                    <td>{{ capsule.delivery_condition }}</td>
                                     <td>{{ capsule.is_active }}</td>
                                     <td>{{ capsule.is_deliverable }}</td>
                                 </tr>
