@@ -8,7 +8,8 @@ from .utils import translate_delivery_condition
 from sklearn.externals import joblib
 from post_classifier.post_classifier import INT_TO_CLASSIFICATION_STRING
 from django.views.generic.edit import UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy,reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 '''View Functions Live Below'''
 
@@ -68,22 +69,25 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-class CapsuleUpdate(UpdateView):
-    #TODO Require login figure that out
+class CapsuleUpdate(LoginRequiredMixin, UpdateView):
+    login_url = '/login'
+    redirect_field_name = ''
     model = Capsule
     form_class = CapsuleForm
     template_name = 'edit_capsule.html'
     success_url = '/capsules'
 
 
-class CapsuleDelete(DeleteView):
-    #TODO Really need to clean up this logic and check if auth'd user owns this capsule as long as requiring login
+class CapsuleDelete(LoginRequiredMixin, DeleteView):
+    # TODO Really need to clean up this logic and check if auth'd user owns this capsule 
+    login_url = '/login'
+    redirect_field_name = ''
     model = Capsule
     success_url = reverse_lazy('display_capsules_view')
     template_name = 'confirm_capsule_delete.html'
     form_class = CapsuleForm
 
-    def get(self,request,pk):
+    def get(self, request, pk):
         return render(request, self.template_name, {'pk': pk})
 
 
