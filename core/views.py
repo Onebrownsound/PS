@@ -87,7 +87,7 @@ class CapsuleUpdate(LoginRequiredMixin, UpdateView):
             raise Http404("We're Sorry No Capsule Matches That Query")
         if requested_capsule.owner_id != request.user.id:
             return HttpResponse('Unauthorized Access', status=403)
-        return super(CapsuleUpdate, self).get(request)  # Isn't OOP awesome?
+        return super(CapsuleUpdate, self).get(request)
 
     def post(self, request, pk, **kwargs):
         try:
@@ -96,11 +96,10 @@ class CapsuleUpdate(LoginRequiredMixin, UpdateView):
             raise Http404("We're Sorry No Capsule Matches That Query")
         if requested_capsule.owner_id != request.user.id:
             return HttpResponse('Unauthorized Access', status=403)
-        return super(CapsuleUpdate, self).post(request, pk, **kwargs)  # Isn't OOP awesome?
+        return super(CapsuleUpdate, self).post(request, pk, **kwargs)
 
 
 class CapsuleDelete(LoginRequiredMixin, DeleteView):
-    # TODO Really need to clean up this logic and check if auth'd user owns this capsule
     login_url = '/login'
     redirect_field_name = ''
     model = Capsule
@@ -118,14 +117,14 @@ class CapsuleDelete(LoginRequiredMixin, DeleteView):
             return HttpResponse('Unauthorized Access', status=403)
         return render(request, self.template_name, {'pk': pk, 'capsule': requested_capsule})
 
-    def post(self, request, pk, **kwargs):
+    def post(self, request, pk):
         try:
             requested_capsule = get_object_or_404(Capsule, pk=pk)
         except:
             raise Http404("We're Sorry No Capsule Matches That Query")
         if requested_capsule.owner_id != request.user.id:
             return HttpResponse('Unauthorized Access', status=403)
-        return super(CapsuleUpdate, self).post(request, pk, **kwargs)  # Isn't OOP awesome?
+        return super(CapsuleDelete, self).post(request, pk)
 
 
 @login_required(login_url='login')

@@ -22,7 +22,7 @@
                             {% for capsule in capsules %}
                                 <tr>
                                     <td> <a href="{%  url 'capsule_delete' pk=capsule.pk %}" > <span class="glyphicon glyphicon-remove"> </span></a>
-                                        <a href="{% url 'capsule-update' pk=capsule.pk %}"> <span class="glyphicon glyphicon-edit"> </span></a> {{ capsule.title }}
+                                        <a href="{% url 'capsule_update' pk=capsule.pk %}"> <span class="glyphicon glyphicon-edit"> </span></a> {{ capsule.title }}
                                     </td>
                                     <td>{{ capsule.created }}</td>
                                     <td>{{ capsule.author_twitter }}</td>

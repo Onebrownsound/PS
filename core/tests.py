@@ -8,7 +8,7 @@ from post_classifier.datacombiner import DataCombiner
 from .models import Capsule, FUTURE_DELIVERY_CHOICES
 from django.contrib.auth.models import User
 import random
-from datetime import date,datetime
+from datetime import date, datetime
 
 
 # Create your tests here.
@@ -75,7 +75,7 @@ class UtilsTestCase(TestCase):
 
     def test_date_deliverable_task(self):
 
-        past_date= date(1777,7,4)
+        past_date = date(1777, 7, 4)
         test_capsule = Capsule.objects.create(activation_type='D', is_active=True, is_deliverable=False,
                                               delivery_condition='SD',
                                               author_twitter='_PSDev',
@@ -83,7 +83,7 @@ class UtilsTestCase(TestCase):
 
         find_deliverable_by_date_candidates()
 
-        self.assertEqual(Capsule.objects.get(delivery_date=past_date).is_deliverable,True)
+        self.assertEqual(Capsule.objects.get(delivery_date=past_date).is_deliverable, True)
 
 
 class ClassifierTestCase(TestCase):
@@ -100,3 +100,31 @@ class ClassifierTestCase(TestCase):
         classifier = joblib.load('./post_classifier/classifier.pkl')
         sampled_tweets = randomly_sample_data(tweets, 100000)
         self.assertGreater(evaluate_classifier(classifier, sampled_tweets), 0.99)
+
+# TODO get this darn test working
+# class UpdateCapsuleTestCase(TestCase):
+#     '''Here we test the update functionallity. AKA CapsuleUpdate View'''
+#
+#
+#     def setUp(self):
+#         # Here we make a dummy User and dummy capsules for subsequent tests. Remember these only exist in test dummy db.
+#         dummy_data = {'title': 'dummy title1', 'message': 'test message1'}
+#         dummy_data2 = {'title': 'dummy title2', 'message': 'test message2'}
+#         User.objects.create_user(username='dom', email='dom@g.com', password='dom')
+#         User.objects.create_user(username='a', email='a@g.com', password='a')
+#
+#         Capsule.objects.create(activation_type='D', is_active=False, is_deliverable=False, author_twitter='_PSDev',
+#                                owner=User.objects.get(username='dom'), **dummy_data)
+#         Capsule.objects.create(activation_type='D', is_active=False, is_deliverable=False, author_twitter='_PSDev',
+#                                owner=User.objects.get(username='dom'), **dummy_data2)
+#
+#     def test_update_get(self):
+#         # Here we make a dummy User and dummy capsules for subsequent tests. Remember these only exist in test dummy db.
+#         dummy_data = {'title': 'dummy title1', 'message': 'test message1'}
+#         dummy_data2 = {'title': 'dummy title2', 'message': 'test message2'}
+#         self.client.login(username='dom', password='dom')
+#         response = self.client.get('/capsules/')
+#         self.assertEqual(response.status_code, 200)
+#         self.client.post('/capsule/1/', {'title': 'changed title'})
+#         examine_capsule = Capsule.objects.get(pk=1)
+#         self.assertNotEqual(dummy_data['title'], examine_capsule.title)

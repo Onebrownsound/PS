@@ -52,8 +52,8 @@ class RegisterUserForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Username:', max_length=100, required=True)
-    password = forms.CharField(label='Password:', max_length=100, required=True, widget=forms.PasswordInput())
+    username = forms.CharField(label='Username:', max_length=30, required=True)
+    password = forms.CharField(label='Password:', max_length=40, required=True, widget=forms.PasswordInput())
 
     def clean_username(self):
         lower_case_username = self.cleaned_data['username'].lower()
@@ -141,3 +141,10 @@ class ClassifyForm(forms.Form):
             Button('cancel', 'Cancel', css_class='indigo btn btn-default')
         ),
     )
+
+# def validate_input(value):
+#     if value == '' or value is None:
+#         raise ValidationError(
+#             ('%(value)s is not a valid input'),
+#             params={'value': value},
+#         )
